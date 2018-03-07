@@ -1,14 +1,13 @@
 package com.josetesan.blockchain;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.security.MessageDigest;
 
+@Slf4j
 public class BlockChainUtils {
 
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BlockChainUtils.class);
 
 
     //Applies Sha256 to a string and returns the result.
@@ -26,7 +25,7 @@ public class BlockChainUtils {
             }
             return hexString.toString();
         } catch (Exception e) {
-            LOGGER.error("Could not parse input {}",input,e);
+            log.error("Could not parse input {}",input,e);
             throw new RuntimeException(e);
         }
     }

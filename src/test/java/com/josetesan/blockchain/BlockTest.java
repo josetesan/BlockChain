@@ -1,23 +1,22 @@
 package com.josetesan.blockchain;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.StreamSupport;
 
+@Slf4j
 public class BlockTest {
 
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(BlockTest.class);
 
     @Test
     public void testCanCreateBlock() {
 
-        Map<String,String> data = new HashMap<>(2);
+        Map<String,String> data = new LinkedHashMap<>(2);
         data.put("key1","value1");
         data.put("key2","value2");
 
@@ -31,7 +30,7 @@ public class BlockTest {
     @Test
     public void testCanChainBlocks() {
 
-        Map<String,String> data = new HashMap<>(2);
+        Map<String,String> data = new LinkedHashMap<>(2);
         data.put("key1","value1");
         data.put("key2","value2");
 
@@ -45,60 +44,75 @@ public class BlockTest {
     }
 
     @Test
-    public void testCanAddToBlockChain() {
-        Map<String,String> data = new HashMap<>(2);
+    public void testABlockChainIsNotValidWithoutMining() {
+        Map<String,String> data = new LinkedHashMap<>(2);
         data.put("key1","value1");
         data.put("key2","value2");
 
-        BlockChain blockChain = BlockChain.getInstance();
-
+        BlockChain blockChain = BlockChain.getInstance(true);
         Block block1 = new Block(data, "0");
         blockChain.addBlock(block1);
-
         Block block2 = new Block(data, block1.getHash());
         blockChain.addBlock(block2);
         Block block3 = new Block(data, block2.getHash());
         blockChain.addBlock(block3);
-
         Assert.assertEquals(3, blockChain.spliterator().estimateSize());
+        Assert.assertFalse(blockChain.isValid());
+
+    }
+
+
+    @Test
+    public void testABlockChainIsValidWhenMined() {
+        Map<String,String> data = new LinkedHashMap<>(2);
+        data.put("key1","value1");
+        data.put("key2","value2");
+
+        BlockChain blockChain = BlockChain.getInstance(true);
+        Block block1 = new Block(data, "0");
+        blockChain.addBlock(block1);
+        Block block2 = new Block(data, block1.getHash());
+        blockChain.addBlock(block2);
+        Block block3 = new Block(data, block2.getHash());
+        blockChain.addBlock(block3);
+        Assert.assertEquals(3, blockChain.spliterator().estimateSize());
+        blockChain.forEach(b -> b.mineBlock(3));
         Assert.assertTrue(blockChain.isValid());
 
     }
 
     @Test
     public void testBenchmarkBlockChainMining() {
-        Map<String,String> data = new HashMap<>(2);
+        Map<String,String> data = new LinkedHashMap<>(2);
         data.put("key1","value1");
         data.put("key2","value2");
 
-        BlockChain blockChain = BlockChain.getInstance();
-        blockChain.clear();
+        BlockChain blockChain = BlockChain.getInstance(true);
 
         Block block1 = new Block(data, "0");
         blockChain.addBlock(block1);
-
         Block block2 = new Block(data, block1.getHash());
         blockChain.addBlock(block2);
         Block block3 = new Block(data, block2.getHash());
         blockChain.addBlock(block3);
+        Block block4 = new Block(data, block3.getHash());
+        blockChain.addBlock(block4);
 
         mineBlockChain(blockChain,1);
         mineBlockChain(blockChain,2);
         mineBlockChain(blockChain,3);
         mineBlockChain(blockChain,4);
         mineBlockChain(blockChain,5);
+        mineBlockChain(blockChain,6);
 
 
     }
 
     private void mineBlockChain(BlockChain blockChain, int difficulty) {
         long init = System.currentTimeMillis();
-        for (Block block : blockChain) {
-
-            block.mineBlock(difficulty);
-
-        }
+        StreamSupport.stream(blockChain.spliterator(), true)
+                .forEach(b -> b.mineBlock(difficulty));
         long end = System.currentTimeMillis() - init;
-        LOGGER.info("It took {} ms to mine with difficulty {}", end, difficulty);
+        log.info("It took {} ms to mine with difficulty {}", end, difficulty);
     }
 }
