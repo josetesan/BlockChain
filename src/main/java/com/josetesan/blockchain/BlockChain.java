@@ -36,6 +36,9 @@ public class BlockChain implements Iterable<Block>{
         data.add(block);
     }
 
+    public void addBlockNotMined(final Block block) {
+        data.add(block);
+    }
 
     @Override
     public Iterator<Block> iterator() {
