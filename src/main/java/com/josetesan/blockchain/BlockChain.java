@@ -12,7 +12,6 @@ import java.util.function.Consumer;
 @Slf4j
 public class BlockChain implements Iterable<Block>{
 
-
     private static final BlockChain _INSTANCE = new BlockChain();
 
     private List<Block> data;

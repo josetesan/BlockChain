@@ -3,7 +3,10 @@ package com.josetesan.blockchain;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
@@ -13,23 +16,28 @@ import java.util.Map;
 import java.util.stream.StreamSupport;
 
 @Slf4j
+@RunWith(Parameterized.class)
 public class BlockTest {
 
 
     @Parameters
-    public static Iterable<? extends Object> data() {
-        return Arrays.asList(1,2,3,4,5,6);
-    }
+    public static Iterable<? extends Object> data() {        return Arrays.asList(1,2,3,4,5);    }
 
     @Parameter // first data value (0) is default
     public /* NOT private */ int difficulty;
 
-    @Test
-    public void testCanCreateBlock() {
 
-        Map<String,String> data = new LinkedHashMap<>(2);
+    private Map<String,String> data;
+
+    @Before
+    public void setup() {
+        data = new LinkedHashMap<>(2);
         data.put("key1","value1");
         data.put("key2","value2");
+    }
+
+    @Test
+    public void testCanCreateBlock() {
 
         Block block = new Block(data, "0");
         Assert.assertNotNull(block.getHash());
@@ -37,13 +45,8 @@ public class BlockTest {
 
     }
 
-
     @Test
     public void testCanChainBlocks() {
-
-        Map<String,String> data = new LinkedHashMap<>(2);
-        data.put("key1","value1");
-        data.put("key2","value2");
 
         Block block1 = new Block(data, "0");
         Block block2 = new Block(data, block1.getHash());
@@ -55,29 +58,7 @@ public class BlockTest {
     }
 
     @Test
-    public void testABlockChainIsNotValidWithoutMining() {
-        Map<String,String> data = new LinkedHashMap<>(2);
-        data.put("key1","value1");
-        data.put("key2","value2");
-
-        BlockChain blockChain = BlockChain.getInstance(true);
-        Block block1 = new Block(data, "0");
-        blockChain.addBlock(block1);
-        Block block2 = new Block(data, block1.getHash());
-        blockChain.addBlock(block2);
-        Block block3 = new Block(data, block2.getHash());
-        blockChain.addBlock(block3);
-        Assert.assertEquals(3, blockChain.spliterator().estimateSize());
-        Assert.assertFalse(blockChain.isValid());
-
-    }
-
-
-    @Test
     public void testABlockChainIsValidWhenMined() {
-        Map<String,String> data = new LinkedHashMap<>(2);
-        data.put("key1","value1");
-        data.put("key2","value2");
 
         BlockChain blockChain = BlockChain.getInstance(true);
         Block block1 = new Block(data, "0");
@@ -86,19 +67,15 @@ public class BlockTest {
         blockChain.addBlock(block2);
         Block block3 = new Block(data, block2.getHash());
         blockChain.addBlock(block3);
+
         Assert.assertEquals(3, blockChain.spliterator().estimateSize());
-        StreamSupport
-                .stream(blockChain.spliterator(), true)
-                .forEach(b -> b.mineBlock(3));
         Assert.assertTrue(blockChain.isValid());
 
     }
 
     @Test
-    public void testBenchmarkBlockChainMining(final int difficulty) {
-        Map<String,String> data = new LinkedHashMap<>(2);
-        data.put("key1","value1");
-        data.put("key2","value2");
+
+    public void testBenchmarkBlockChainMining() {
 
         BlockChain blockChain = BlockChain.getInstance(true);
 
@@ -112,7 +89,7 @@ public class BlockTest {
         blockChain.addBlock(block3);
         Block block4 = new Block(data, block3.getHash());
         blockChain.addBlock(block4);
-
+        log.info("Mining with {} difficulty",difficulty);
         mineBlockChain(blockChain,difficulty);
 
     }
