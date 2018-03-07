@@ -4,7 +4,10 @@ package com.josetesan.blockchain;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.StreamSupport;
@@ -12,6 +15,14 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class BlockTest {
 
+
+    @Parameters
+    public static Iterable<? extends Object> data() {
+        return Arrays.asList(1,2,3,4,5,6);
+    }
+
+    @Parameter // first data value (0) is default
+    public /* NOT private */ int difficulty;
 
     @Test
     public void testCanCreateBlock() {
@@ -76,18 +87,22 @@ public class BlockTest {
         Block block3 = new Block(data, block2.getHash());
         blockChain.addBlock(block3);
         Assert.assertEquals(3, blockChain.spliterator().estimateSize());
-        blockChain.forEach(b -> b.mineBlock(3));
+        StreamSupport
+                .stream(blockChain.spliterator(), true)
+                .forEach(b -> b.mineBlock(3));
         Assert.assertTrue(blockChain.isValid());
 
     }
 
     @Test
-    public void testBenchmarkBlockChainMining() {
+    public void testBenchmarkBlockChainMining(final int difficulty) {
         Map<String,String> data = new LinkedHashMap<>(2);
         data.put("key1","value1");
         data.put("key2","value2");
 
         BlockChain blockChain = BlockChain.getInstance(true);
+
+        // 4 blocks as my machine ahs 4 cores
 
         Block block1 = new Block(data, "0");
         blockChain.addBlock(block1);
@@ -98,19 +113,14 @@ public class BlockTest {
         Block block4 = new Block(data, block3.getHash());
         blockChain.addBlock(block4);
 
-        mineBlockChain(blockChain,1);
-        mineBlockChain(blockChain,2);
-        mineBlockChain(blockChain,3);
-        mineBlockChain(blockChain,4);
-        mineBlockChain(blockChain,5);
-        mineBlockChain(blockChain,6);
-
+        mineBlockChain(blockChain,difficulty);
 
     }
 
     private void mineBlockChain(BlockChain blockChain, int difficulty) {
         long init = System.currentTimeMillis();
-        StreamSupport.stream(blockChain.spliterator(), true)
+        StreamSupport
+                .stream(blockChain.spliterator(), true)
                 .forEach(b -> b.mineBlock(difficulty));
         long end = System.currentTimeMillis() - init;
         log.info("It took {} ms to mine with difficulty {}", end, difficulty);

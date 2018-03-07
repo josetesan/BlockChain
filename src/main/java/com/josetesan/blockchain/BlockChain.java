@@ -21,7 +21,7 @@ public class BlockChain implements Iterable<Block>{
 
     private BlockChain() {
         this.data = new LinkedList<>();
-        this.difficulty = 3;
+        this.difficulty = 5;
     }
 
 
@@ -33,6 +33,7 @@ public class BlockChain implements Iterable<Block>{
     }
 
     public void addBlock(final Block block) {
+        block.mineBlock(difficulty);
         data.add(block);
     }
 
