@@ -1,7 +1,7 @@
 package com.josetesan.blockchain;
 
 
-import com.josetesan.blockchain.Block.Block;
+import com.josetesan.blockchain.block.Block;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
