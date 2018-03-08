@@ -6,6 +6,7 @@ import com.josetesan.blockchain.transaction.Transaction;
 import com.josetesan.blockchain.transaction.TransactionInput;
 import com.josetesan.blockchain.transaction.TransactionOutput;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.security.KeyPair;
@@ -15,6 +16,7 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.ECGenParameterSpec;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.josetesan.blockchain.Constants.SECURERANDOM_ALGORITHM;
@@ -23,13 +25,16 @@ import static com.josetesan.blockchain.Constants.SIGNATURE_PROVIDER;
 import static com.josetesan.blockchain.Constants.ELIPTIC_CURVE_ALGORITHM;
 
 @Getter
+@Slf4j
 public class Wallet implements Serializable {
 
     private PrivateKey privateKey;
     private PublicKey publicKey;
+    private Map<String, TransactionOutput> UTXOs;
 
     public Wallet() {
         generateKeyPair();
+        UTXOs = new LinkedHashMap<>();
     }
 
     private void generateKeyPair() {
@@ -53,8 +58,8 @@ public class Wallet implements Serializable {
         for (Map.Entry<String, TransactionOutput> item: BlockChain.getInstance(false).getUTXOs().entrySet()){
             TransactionOutput UTXO = item.getValue();
             if(UTXO.isMine(publicKey)) { //if output belongs to me ( if coins belong to me )
-                UTXOs.put(UTXO.id,UTXO); //add it to our list of unspent transactions.
-                total += UTXO.value ;
+                UTXOs.put(UTXO.getId(),UTXO); //add it to our list of unspent transactions.
+                total += UTXO.getValue() ;
             }
         }
         return total;
@@ -62,7 +67,7 @@ public class Wallet implements Serializable {
     //Generates and returns a new transaction from this wallet.
     public Transaction sendFunds(PublicKey _recipient, float value ) {
         if(getBalance() < value) { //gather balance and check funds.
-            System.out.println("#Not Enough funds to send transaction. Transaction Discarded.");
+            log.error("#Not Enough funds to send transaction. Transaction Discarded.");
             return null;
         }
         //create array list of inputs
@@ -71,8 +76,8 @@ public class Wallet implements Serializable {
         float total = 0;
         for (Map.Entry<String, TransactionOutput> item: UTXOs.entrySet()){
             TransactionOutput UTXO = item.getValue();
-            total += UTXO.value;
-            inputs.add(new TransactionInput(UTXO.id));
+            total += UTXO.getValue();
+            inputs.add(new TransactionInput(UTXO.getId()));
             if(total > value) break;
         }
 
@@ -80,10 +85,9 @@ public class Wallet implements Serializable {
         newTransaction.generateSignature(privateKey);
 
         for(TransactionInput input: inputs){
-            UTXOs.remove(input.transactionOutputId);
+            UTXOs.remove(input.getTransactionOutputId());
         }
         return newTransaction;
     }
 
-}
 }
