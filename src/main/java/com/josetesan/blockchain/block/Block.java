@@ -1,8 +1,7 @@
 package com.josetesan.blockchain.block;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.josetesan.blockchain.utils.BlockChainUtils;
+import com.jsoniter.output.JsonStream;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,7 +20,6 @@ public class Block {
     private AtomicLong nonce;
     private static final Integer VERSION = 0x0001;
 
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public Block(Map<String, String> data,String previousHash) {
         this.data = data;
@@ -34,7 +32,7 @@ public class Block {
 
     public String calculateHash() {
 
-        final String jsonString = GSON.toJson(data);
+        final String jsonString = JsonStream.serialize(data);
         return BlockChainUtils.applySha256(String.format("%s%s%s%s", previousHash, Long.toString(timeStamp), this.nonce.get(), jsonString));
     }
 
