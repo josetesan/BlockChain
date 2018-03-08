@@ -1,8 +1,8 @@
 package com.josetesan.blockchain.transaction;
 
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 public class TransactionInput {
 
     private String transactionOutputId; //Reference to TransactionOutputs -> transactionId
@@ -10,6 +10,5 @@ public class TransactionInput {
 
     public TransactionInput(String transactionOutputId) {
         this.transactionOutputId = transactionOutputId;
-        this.UTXO = null;
     }
 }

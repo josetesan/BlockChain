@@ -8,5 +8,6 @@ public class Constants {
     public static final String SIGNATURE_PROVIDER = "BC";
     public static final String SECURERANDOM_ALGORITHM = "SHA1PRNG";
     public static final String ELIPTIC_CURVE_ALGORITHM = "prime192v1";
+    public static final float MINIMUM_TRANSACTION  = 0.1f;
 
 }
