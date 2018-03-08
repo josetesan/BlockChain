@@ -1,7 +1,8 @@
-package com.josetesan.blockchain;
+package com.josetesan.blockchain.block;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.josetesan.blockchain.utils.BlockChainUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,6 +44,6 @@ public class Block {
             nonce.incrementAndGet();
             this.hash = calculateHash();
         }
-        log.debug("Block Mined !! {} with nonce {}", this.hash, nonce.get());
+        log.debug("Block Mined !! ChopoCoin created {}  with nonce {}", this.hash, nonce.get());
     }
 }

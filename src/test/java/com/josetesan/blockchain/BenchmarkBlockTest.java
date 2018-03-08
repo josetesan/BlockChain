@@ -1,8 +1,8 @@
 package com.josetesan.blockchain;
 
 
+import com.josetesan.blockchain.Block.Block;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +21,7 @@ public class BenchmarkBlockTest {
 
 
     @Parameters
-    public static Iterable<? extends Object> data() {        return Arrays.asList(1,2,3,4,5,6);    }
+    public static Iterable<? extends Object> data() {  return Arrays.asList(1,2,3,4,5,6);    }
 
     @Parameter // first data value (0) is default
     public int difficulty;
@@ -34,6 +34,7 @@ public class BenchmarkBlockTest {
         data = new LinkedHashMap<>(2);
         data.put("key1","value1");
         data.put("key2","value2");
+        data.put("key3","value3");
     }
 
 
