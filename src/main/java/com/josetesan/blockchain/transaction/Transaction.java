@@ -13,11 +13,11 @@ public class Transaction {
 
     private static AtomicLong  sequence = new AtomicLong(0L); // a rough count of how many transactions have been generated.
 
-    private String transactionId = null; // this is also the hash of the transaction.
+    private String transactionId; // this is also the hash of the transaction.
     private PublicKey sender; // senders address/public key.
     private PublicKey recipient; // Recipients address/public key.
     private float value;
-    private byte[] signature=null; // this is to prevent anybody else from spending funds in our wallet.
+    private byte[] signature; // this is to prevent anybody else from spending funds in our wallet.
     private ArrayList<TransactionInput> inputs;
     private ArrayList<TransactionOutput> outputs;
 

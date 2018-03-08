@@ -3,7 +3,7 @@ package com.josetesan.blockchain;
 
 public class Constants {
 
-    public static final String ALGORITHM = "SHA256";
+    public static final String ALGORITHM = "SHA-256";
     public static final String SIGNATURE_ALGORITHM = "ECDSA";
     public static final String SIGNATURE_PROVIDER = "BC";
     public static final String SECURERANDOM_ALGORITHM = "SHA1PRNG";
