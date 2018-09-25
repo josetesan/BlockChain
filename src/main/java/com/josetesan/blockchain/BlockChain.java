@@ -1,10 +1,16 @@
 package com.josetesan.blockchain;
 
+import com.josetesan.blockchain.block.Block;
+import com.josetesan.blockchain.transaction.Transaction;
+import com.josetesan.blockchain.transaction.TransactionOutput;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
@@ -16,11 +22,17 @@ public class BlockChain implements Iterable<Block>{
 
     private List<Block> data;
     private Integer difficulty;
+    @Getter
+    private Map<String,TransactionOutput> UTXOs;
+
+    public static Transaction genesisTransaction;
+
     private static final Integer VERSION = 0x0001;
 
     private BlockChain() {
         this.data = new LinkedList<>();
         this.difficulty = 5;
+        UTXOs = new LinkedHashMap<>();
     }
 
 
