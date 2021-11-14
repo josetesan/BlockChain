@@ -42,7 +42,7 @@ public class BenchmarkBlockTest {
     public void testBenchmarkBlockChainMining() {
         BlockChain blockChain = BlockChain.getInstance(true);
 
-        // 4 blocks as my machine ahs 4 cores
+        // 6 blocks as my machine has 6 cores
 
         Block block1 = new Block(data, "0");
         blockChain.addBlockNotMined(block1);
@@ -52,6 +52,10 @@ public class BenchmarkBlockTest {
         blockChain.addBlockNotMined(block3);
         Block block4 = new Block(data, block3.getHash());
         blockChain.addBlockNotMined(block4);
+        Block block5 = new Block(data, block4.getHash());
+        blockChain.addBlockNotMined(block5);
+        Block block6 = new Block(data, block5.getHash());
+        blockChain.addBlockNotMined(block6);
         log.info("Mining with {} difficulty",difficulty);
         mineBlockChain(blockChain,difficulty);
 
